@@ -3,81 +3,510 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="bromsukrhur">
-<title>bromsukrhur - GitHub 저장소</title>
+<title>My Space</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f6f8fa; min-height: 100vh; padding: 2rem 1rem; }
-  h1 { font-size: 18px; font-weight: 500; color: #333; margin-bottom: 1.5rem; text-align: center; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-width: 800px; margin: 0 auto; }
-  .repo-btn { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid #e1e4e8; border-radius: 10px; text-decoration: none; color: #24292f; transition: background 0.15s, border-color 0.15s; }
-  .repo-btn:hover { background: #f0f3f6; border-color: #b0b7bf; }
-  .icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
-  .repo-name { font-size: 13px; font-weight: 500; color: #24292f; line-height: 1.3; }
-  .repo-sub { font-size: 11px; color: #888; margin-top: 2px; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #060812;
+    --bg2: #0d1020;
+    --glass: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.12);
+    --glass-hover: rgba(255,255,255,0.09);
+    --text: #f0f0ff;
+    --muted: rgba(240,240,255,0.5);
+    --accent: #7c6aff;
+    --accent2: #ff6ab0;
+    --accent3: #6af0ff;
+    --glow: rgba(124,106,255,0.3);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; animation: drift 12s ease-in-out infinite alternate; }
+  .orb1 { width: 500px; height: 500px; background: #4a3aff; top: -100px; left: -100px; animation-delay: 0s; }
+  .orb2 { width: 400px; height: 400px; background: #ff3a8a; bottom: 100px; right: -80px; animation-delay: -4s; }
+  .orb3 { width: 350px; height: 350px; background: #3aefff; top: 40%; left: 40%; animation-delay: -8s; }
+  @keyframes drift {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(30px,40px) scale(1.08); }
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(6,8,18,0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid var(--glass-border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.2rem;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 6rem 2rem 4rem;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    padding: 6px 16px; border-radius: 100px; font-size: 0.78rem;
+    color: var(--accent3); margin-bottom: 1.8rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-weight: 800; line-height: 1.1;
+    animation: fadeUp 0.8s 0.15s ease both;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted); max-width: 480px;
+    margin: 1.2rem auto 2.5rem; line-height: 1.7;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeUp 0.8s 0.45s ease both; }
+  .btn-primary {
+    padding: 0.75rem 2rem; border-radius: 100px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; font-weight: 500; font-size: 0.9rem;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow); }
+  .btn-glass {
+    padding: 0.75rem 2rem; border-radius: 100px;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    color: var(--text); font-size: 0.9rem;
+    cursor: pointer; text-decoration: none; transition: background 0.2s;
+  }
+  .btn-glass:hover { background: var(--glass-hover); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  section { position: relative; z-index: 1; padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.8rem; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 3rem; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media(max-width:640px){ .about-grid { grid-template-columns: 1fr; } .nav-links { gap: 1rem; } }
+  .glass-card {
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(20px); border-radius: 20px; padding: 2rem;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .glass-card:hover { background: var(--glass-hover); transform: translateY(-4px); }
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; }
+  .card-text { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+  .hobby-chips { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 3rem; }
+  .chip {
+    padding: 0.5rem 1.2rem; border-radius: 100px;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    font-size: 0.85rem; color: var(--text); cursor: pointer;
+    transition: all 0.2s; backdrop-filter: blur(10px);
+  }
+  .chip:hover, .chip.active {
+    background: rgba(124,106,255,0.2); border-color: var(--accent); color: #c4baff;
+    box-shadow: 0 0 20px rgba(124,106,255,0.2);
+  }
+
+  .gallery-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .gallery-tabs { display: flex; gap: 0.5rem; }
+  .tab {
+    padding: 0.45rem 1.1rem; border-radius: 100px;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    font-size: 0.8rem; color: var(--muted); cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);
+  }
+  .tab.active { background: rgba(124,106,255,0.2); border-color: var(--accent); color: #c4baff; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+  .gallery-item {
+    border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 4/3;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    cursor: pointer; transition: transform 0.3s;
+  }
+  .gallery-item:hover { transform: scale(1.03); }
+  .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+  /* --- 실제 이미지로 교체하려면 아래 .fake-img를 <img> 태그로 바꾸세요 --- */
+  .fake-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: flex-end;
+    padding: 1rem; position: relative; overflow: hidden;
+  }
+  .fake-img::before { content: ''; position: absolute; inset: 0; transition: transform 0.4s; }
+  .gallery-item:hover .fake-img::before { transform: scale(1.08); }
+  .img-tokyo::before    { background: linear-gradient(160deg, #0a0520 0%, #1a0840 40%, #ff4488 70%, #ffaa00 100%); }
+  .img-paris::before    { background: linear-gradient(160deg, #050a30 0%, #0a2060 40%, #4488ff 75%, #aaddff 100%); }
+  .img-bali::before     { background: linear-gradient(160deg, #061810 0%, #0a3020 35%, #00aa55 65%, #ffee44 100%); }
+  .img-nyc::before      { background: linear-gradient(160deg, #050505 0%, #1a1a2e 40%, #e94560 70%, #ffd700 100%); }
+  .img-iceland::before  { background: linear-gradient(160deg, #020820 0%, #041030 35%, #1a44aa 60%, #44ffdd 80%, #ffffff 100%); }
+  .img-santorini::before{ background: linear-gradient(160deg, #0a1540 0%, #1a3080 40%, #4488ee 65%, #ffffff 85%, #ffee99 100%); }
+
+  .img-label { position: relative; z-index: 1; color: #fff; font-size: 0.8rem; font-weight: 500; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+  .ai-badge {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 100px; padding: 3px 10px;
+    font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
+  }
+  .gallery-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; z-index: 3; font-size: 0.85rem; color: #fff;
+  }
+
+  .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+  .app-card {
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(15px); border-radius: 16px; padding: 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    text-decoration: none; color: var(--text);
+    transition: all 0.3s;
+  }
+  .app-card:hover { background: var(--glass-hover); transform: translateY(-3px); border-color: var(--accent); }
+  .app-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+  .app-name { font-size: 0.88rem; font-weight: 500; margin-bottom: 3px; }
+  .app-sub { font-size: 0.75rem; color: var(--muted); }
+  .tool-card {
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(15px); border-radius: 16px; padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 0.8rem; transition: all 0.3s;
+  }
+  .tool-card:hover { background: var(--glass-hover); transform: translateY(-3px); }
+  .tool-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; }
+  .tool-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; }
+  .tool-tag { font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.05em; }
+
+  .contact-box {
+    text-align: center;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(20px); border-radius: 24px; padding: 3.5rem 2rem;
+  }
+  .contact-box p { color: var(--muted); margin: 1rem 0 2rem; line-height: 1.7; }
+  .social-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .social-link {
+    padding: 0.65rem 1.5rem; border-radius: 100px;
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    color: var(--text); text-decoration: none; font-size: 0.85rem;
+    transition: all 0.2s; backdrop-filter: blur(10px);
+  }
+  .social-link:hover { background: rgba(124,106,255,0.15); border-color: var(--accent); color: #c4baff; }
+
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem;
+    color: var(--muted); font-size: 0.8rem;
+    border-top: 0.5px solid var(--glass-border);
+  }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .divider { height: 0.5px; background: var(--glass-border); margin: 0 2rem; }
 </style>
 </head>
 <body>
-<h1>bromsukrhur / 앱 모음</h1>
-<div class="grid">
 
-  <a class="repo-btn" href="https://bromsukrhur.github.io/bookmark-hub" target="_blank">
-    <div class="icon" style="background:#E6F1FB;">🔖</div>
-    <div><div class="repo-name">bookmark-hub</div><div class="repo-sub">북마크 관리</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/clips" target="_blank">
-    <div class="icon" style="background:#EEEDFE;">📎</div>
-    <div><div class="repo-name">clips</div><div class="repo-sub">클립 모음</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/memo/memo.html" target="_blank">
-    <div class="icon" style="background:#EAF3DE;">📝</div>
-    <div><div class="repo-name">memo</div><div class="repo-sub">메모</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/cook-cooking" target="_blank">
-    <div class="icon" style="background:#FAECE7;">🍳</div>
-    <div><div class="repo-name">cook-cooking</div><div class="repo-sub">요리</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/weather" target="_blank">
-    <div class="icon" style="background:#E1F5EE;">🌤</div>
-    <div><div class="repo-name">weather</div><div class="repo-sub">날씨</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/exchange" target="_blank">
-    <div class="icon" style="background:#FAEEDA;">💱</div>
-    <div><div class="repo-name">exchange</div><div class="repo-sub">환율</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/study-alarm" target="_blank">
-    <div class="icon" style="background:#FCEBEB;">⏰</div>
-    <div><div class="repo-name">study-alarm</div><div class="repo-sub">학습 알람</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/per-radar" target="_blank">
-    <div class="icon" style="background:#EEEDFE;">📡</div>
-    <div><div class="repo-name">per-radar</div><div class="repo-sub">레이더</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/card-tracker" target="_blank">
-    <div class="icon" style="background:#E6F1FB;">💳</div>
-    <div><div class="repo-name">card-tracker</div><div class="repo-sub">카드 관리</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/study-Englishword" target="_blank">
-    <div class="icon" style="background:#EAF3DE;">📚</div>
-    <div><div class="repo-name">study-Englishword</div><div class="repo-sub">영어 단어</div></div>
-  </a>
-
-  <a class="repo-btn" href="https://bromsukrhur.github.io/stock-english-tutor" target="_blank">
-    <div class="icon" style="background:#FAEEDA;">📈</div>
-    <div><div class="repo-name">stock-english-tutor</div><div class="repo-sub">주식 영어</div></div>
-  </a>
-
+<div class="orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 </div>
+
+<nav>
+  <div class="nav-logo">✦ myspace</div>
+  <div class="nav-links">
+    <a href="#about">소개</a>
+    <a href="#hobbies">취미</a>
+    <a href="#gallery">갤러리</a>
+    <a href="#apps">앱</a>
+    <a href="#tools">도구</a>
+    <a href="#contact">연락</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <div class="dot"></div>
+    2026 · 나만의 공간
+  </div>
+  <h1>안녕, 나는<br><span>탐험가야</span></h1>
+  <p class="hero-sub">세상 모든 곳을 상상하고, 기록하고, 꿈꾸는 사람.<br>아직 가지 못한 곳들을 AI로 먼저 경험해요.</p>
+  <div class="hero-cta">
+    <a href="#gallery" class="btn-primary">✦ AI 여행 갤러리 보기</a>
+    <a href="#about" class="btn-glass">나 알아가기</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about" class="reveal">
+  <div class="section-label">about me</div>
+  <div class="section-title">나에 대해 ✦</div>
+  <div class="about-grid">
+    <div class="glass-card">
+      <div class="card-icon">🌍</div>
+      <div class="card-title">탐험하는 사람</div>
+      <div class="card-text">여행을 못 가도 괜찮아요. AI로 만든 사진과 영상으로 세계 구석구석을 대리만족 중. 도쿄 골목부터 아이슬란드 오로라까지, 상상의 여행은 계속됩니다.</div>
+    </div>
+    <div class="glass-card">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">AI 탐험가</div>
+      <div class="card-text">Grok, Gemini 같은 AI 도구로 사진과 영상을 만들고 있어요. 아직 가지 못한 곳의 풍경을 직접 생성하는 게 요즘 가장 재미있는 일.</div>
+    </div>
+    <div class="glass-card">
+      <div class="card-icon">💻</div>
+      <div class="card-title">만드는 사람</div>
+      <div class="card-text">GitHub Pages로 이 페이지도 직접 만들었어요. 코딩이 무섭지 않고, Claude가 있으니까요. 아이디어를 현실로 만드는 과정이 좋아요.</div>
+    </div>
+    <div class="glass-card">
+      <div class="card-icon">🌙</div>
+      <div class="card-title">야행성 크리에이터</div>
+      <div class="card-text">밤 12시가 넘어서 작업이 제일 잘 돼요. 음악 틀어두고 AI 프롬프트 짜거나 새 페이지 구상하는 게 일상의 작은 행복.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOBBIES -->
+<section id="hobbies" class="reveal">
+  <div class="section-label">hobbies</div>
+  <div class="section-title">취미 & 관심사 ✦</div>
+  <div class="hobby-chips">
+    <span class="chip active">🌏 여행 (대리만족)</span>
+    <span class="chip">🤖 AI 이미지 생성</span>
+    <span class="chip">🎬 AI 영상 제작</span>
+    <span class="chip">💻 웹 만들기</span>
+    <span class="chip">🎵 음악 감상</span>
+    <span class="chip">📸 사진 편집</span>
+    <span class="chip">🌙 새벽 감성</span>
+    <span class="chip">☕ 카페 탐방</span>
+  </div>
+  <div class="about-grid">
+    <div class="glass-card">
+      <div class="card-title">🎯 요즘 빠진 것</div>
+      <div class="card-text">Grok으로 여행지 이미지 생성 → Gemini로 영상 변환 → 여기 올리기. 이 플로우가 너무 재미있어서 매일 하고 있어요.</div>
+    </div>
+    <div class="glass-card">
+      <div class="card-title">📌 다음 목표</div>
+      <div class="card-text">AI로 단편 여행 다큐 만들어보기. 실제 여행을 못 가도 내러티브가 있는 콘텐츠를 만드는 게 꿈이에요.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GALLERY -->
+<section id="gallery" class="reveal">
+  <div class="gallery-header">
+    <div>
+      <div class="section-label">AI travel gallery</div>
+      <div class="section-title" style="margin-bottom:0">AI 여행 갤러리 ✦</div>
+    </div>
+    <div class="gallery-tabs">
+      <div class="tab active" onclick="filterGallery('all', this)">전체</div>
+      <div class="tab" onclick="filterGallery('photo', this)">AI 사진</div>
+      <div class="tab" onclick="filterGallery('video', this)">AI 영상</div>
+    </div>
+  </div>
+  <div class="gallery-grid" id="gallery-grid">
+    <!--
+      실제 AI 사진으로 교체하려면 아래 .fake-img 블록 대신 이렇게 쓰세요:
+      <img src="your-image.jpg" alt="Tokyo" style="width:100%;height:100%;object-fit:cover;">
+    -->
+    <div class="gallery-item" data-type="photo">
+      <div class="fake-img img-tokyo"><div class="img-label">🗼 Tokyo, Japan</div></div>
+      <div class="ai-badge">AI Photo</div>
+      <div class="gallery-overlay">Grok으로 생성 →</div>
+    </div>
+    <div class="gallery-item" data-type="video">
+      <div class="fake-img img-paris"><div class="img-label">🗼 Paris, France</div></div>
+      <div class="ai-badge">AI Video</div>
+      <div class="gallery-overlay">Gemini로 생성 →</div>
+    </div>
+    <div class="gallery-item" data-type="photo">
+      <div class="fake-img img-bali"><div class="img-label">🌴 Bali, Indonesia</div></div>
+      <div class="ai-badge">AI Photo</div>
+      <div class="gallery-overlay">Grok으로 생성 →</div>
+    </div>
+    <div class="gallery-item" data-type="video">
+      <div class="fake-img img-nyc"><div class="img-label">🌆 New York, USA</div></div>
+      <div class="ai-badge">AI Video</div>
+      <div class="gallery-overlay">Gemini로 생성 →</div>
+    </div>
+    <div class="gallery-item" data-type="photo">
+      <div class="fake-img img-iceland"><div class="img-label">🌌 Iceland — Aurora</div></div>
+      <div class="ai-badge">AI Photo</div>
+      <div class="gallery-overlay">Grok으로 생성 →</div>
+    </div>
+    <div class="gallery-item" data-type="photo">
+      <div class="fake-img img-santorini"><div class="img-label">🏛️ Santorini, Greece</div></div>
+      <div class="ai-badge">AI Photo</div>
+      <div class="gallery-overlay">Grok으로 생성 →</div>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem; color:var(--muted); font-size:0.83rem; text-align:center;">
+    ✦ 모든 이미지/영상은 AI로 직접 생성했습니다 · 실제 파일로 교체 가능
+  </p>
+</section>
+
+<div class="divider"></div>
+
+<!-- APPS -->
+<section id="apps" class="reveal">
+  <div class="section-label">my apps</div>
+  <div class="section-title">내가 만든 앱들 ✦</div>
+  <div class="apps-grid">
+    <a class="app-card" href="https://myaitravel.github.io/bookmark-hub" target="_blank">
+      <div class="app-icon" style="background:rgba(56,139,253,0.15);">🔖</div>
+      <div><div class="app-name">bookmark-hub</div><div class="app-sub">북마크 관리</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/clips" target="_blank">
+      <div class="app-icon" style="background:rgba(124,106,255,0.15);">📎</div>
+      <div><div class="app-name">clips</div><div class="app-sub">클립 모음</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/memo/memo.html" target="_blank">
+      <div class="app-icon" style="background:rgba(63,185,80,0.15);">📝</div>
+      <div><div class="app-name">memo</div><div class="app-sub">메모</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/cook-cooking" target="_blank">
+      <div class="app-icon" style="background:rgba(255,106,71,0.15);">🍳</div>
+      <div><div class="app-name">cook-cooking</div><div class="app-sub">요리</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/weather" target="_blank">
+      <div class="app-icon" style="background:rgba(29,158,117,0.15);">🌤</div>
+      <div><div class="app-name">weather</div><div class="app-sub">날씨</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/exchange" target="_blank">
+      <div class="app-icon" style="background:rgba(250,199,117,0.15);">💱</div>
+      <div><div class="app-name">exchange</div><div class="app-sub">환율</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/study-alarm" target="_blank">
+      <div class="app-icon" style="background:rgba(226,75,74,0.15);">⏰</div>
+      <div><div class="app-name">study-alarm</div><div class="app-sub">학습 알람</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/per-radar" target="_blank">
+      <div class="app-icon" style="background:rgba(124,106,255,0.15);">📡</div>
+      <div><div class="app-name">per-radar</div><div class="app-sub">레이더</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/card-tracker" target="_blank">
+      <div class="app-icon" style="background:rgba(56,139,253,0.15);">💳</div>
+      <div><div class="app-name">card-tracker</div><div class="app-sub">카드 관리</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/study-Englishword" target="_blank">
+      <div class="app-icon" style="background:rgba(63,185,80,0.15);">📚</div>
+      <div><div class="app-name">study-Englishword</div><div class="app-sub">영어 단어</div></div>
+    </a>
+    <a class="app-card" href="https://myaitravel.github.io/stock-english-tutor" target="_blank">
+      <div class="app-icon" style="background:rgba(250,199,117,0.15);">📈</div>
+      <div><div class="app-name">stock-english-tutor</div><div class="app-sub">주식 영어</div></div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOOLS -->
+<section id="tools" class="reveal">
+  <div class="section-label">tools I use</div>
+  <div class="section-title">사용하는 도구 ✦</div>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-name">🤖 Grok</div>
+      <div class="tool-tag">AI 이미지 생성</div>
+      <div class="tool-desc">X(트위터) AI. 여행지 사진 생성에 자주 써요. 프롬프트 반응이 빠르고 스타일이 풍부해요.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">✨ Gemini</div>
+      <div class="tool-tag">AI 영상 생성</div>
+      <div class="tool-desc">Google AI. 이미지→영상 변환이 가능해서 AI 여행 영상 만들 때 메인으로 사용 중.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">💬 Claude</div>
+      <div class="tool-tag">코딩 & 아이디어</div>
+      <div class="tool-desc">이 홈페이지도 Claude로 만들었어요. 코드부터 글쓰기까지 뭐든 물어볼 수 있는 친구.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">🐙 GitHub</div>
+      <div class="tool-tag">호스팅</div>
+      <div class="tool-desc">GitHub Pages로 이 사이트를 무료 호스팅 중. 코드 올리면 바로 배포되는 게 마법같아요.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+  <div class="contact-box">
+    <div class="section-label" style="text-align:center">contact</div>
+    <div class="section-title" style="text-align:center; margin-bottom:0">연락해요 ✦</div>
+    <p>AI 여행 콘텐츠, 웹 만들기, 아니면 그냥 수다도 좋아요.<br>언제든 편하게 연락 주세요.</p>
+    <div class="social-links">
+      <a href="mailto:your@email.com" class="social-link">✉️ 이메일</a>
+      <a href="https://github.com/your-id" class="social-link">🐙 GitHub</a>
+      <a href="https://instagram.com/your-id" class="social-link">📸 인스타그램</a>
+      <a href="https://x.com/your-id" class="social-link">🐦 X (트위터)</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>✦ Made with Claude & GitHub Pages · 2026</p>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => obs.observe(el));
+
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  function filterGallery(type, tabEl) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.style.display = (type === 'all' || item.dataset.type === type) ? 'block' : 'none';
+    });
+  }
+</script>
 </body>
 </html>
