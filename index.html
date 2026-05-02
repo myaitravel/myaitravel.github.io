@@ -234,48 +234,44 @@
 
   /* 영상 갤러리 */
   .vg-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .vg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+  .vg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
   .vg-item {
     background: var(--glass); border: 0.5px solid var(--glass-border);
     backdrop-filter: blur(15px); border-radius: 16px; overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; cursor: pointer;
   }
-  .vg-item:hover { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
+  .vg-item:hover:not(.playing) { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
+  .vg-item.playing { border-color: rgba(124,106,255,0.8); box-shadow: 0 0 28px rgba(124,106,255,0.25); cursor: default; }
   .vg-thumb {
     position: relative; aspect-ratio: 16/9; background: var(--bg2);
     display: flex; align-items: center; justify-content: center; overflow: hidden;
   }
-  .vg-thumb video { width: 100%; height: 100%; object-fit: cover; }
-  .vg-thumb-placeholder {
-    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    font-size: 2.5rem;
-  }
-  .vg-play-btn {
+  .vg-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vg-thumb-placeholder { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem; }
+  .vg-overlay {
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s; cursor: pointer;
+    background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s;
   }
-  .vg-item:hover .vg-play-btn { opacity: 1; }
+  .vg-item:hover:not(.playing) .vg-overlay { opacity: 1; }
   .vg-play-circle {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: rgba(255,255,255,0.92);
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.92); pointer-events: none;
     display: flex; align-items: center; justify-content: center;
   }
-  .vg-play-circle svg { margin-left: 3px; }
+  .vg-play-circle svg { margin-left: 4px; }
   .vg-badge {
-    position: absolute; top: 8px; left: 8px;
+    position: absolute; top: 8px; left: 8px; z-index: 2;
     background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
-    border: 0.5px solid rgba(255,255,255,0.18);
-    border-radius: 100px; padding: 3px 10px;
-    font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
+    border: 0.5px solid rgba(255,255,255,0.18); border-radius: 100px;
+    padding: 3px 10px; font-size: 0.68rem; color: var(--accent3);
+    letter-spacing: 0.05em; transition: opacity 0.2s;
   }
+  .vg-item.playing .vg-badge { opacity: 0; }
   .vg-info { padding: 0.9rem 1rem; }
   .vg-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
   .vg-meta { font-size: 0.75rem; color: var(--muted); }
-  .vg-empty {
-    grid-column: 1/-1; text-align: center; padding: 3rem 1rem;
-    color: var(--muted); font-size: 0.9rem; line-height: 1.8;
-  }
-  .vg-empty .vg-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+  .vg-empty { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted); font-size:0.9rem; }
+  .vg-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
 </style>
 </head>
 <body>
@@ -432,20 +428,16 @@
 <section id="videos" class="reveal">
   <div class="gallery-header">
     <div>
-      <div class="section-label">Grok video gallery</div>
+      <div class="section-label">video gallery</div>
       <div class="section-title" style="margin-bottom:0">영상 갤러리 ✦</div>
     </div>
-    <div class="gallery-tabs vg-filters">
+    <div class="vg-filters">
       <div class="tab active" onclick="filterVideos('all',this)">전체</div>
       <div class="tab" onclick="filterVideos('grok',this)">Grok</div>
-      <div class="tab" onclick="filterVideos('gemini',this)">Gemini</div>
       <div class="tab" onclick="filterVideos('travel',this)">여행</div>
     </div>
   </div>
   <div class="vg-grid" id="vg-grid"></div>
-  <p style="margin-top:1.5rem; color:var(--muted); font-size:0.83rem; text-align:center;">
-    ✦ videos/ 폴더에 파일을 추가하면 카드가 자동으로 채워집니다
-  </p>
 </section>
 
 <div class="divider"></div>
@@ -523,33 +515,30 @@
 
   // ===== 영상 갤러리 =====
   const VIDEO_LIST = [
-    { title: 'Tokyo Night Walk — AI 영상', file: 'videos/tokyo-night.mp4',           tag: 'grok',   label: 'Grok',   emoji: '🗼', desc: '도쿄 밤거리 AI 생성 영상' },
-    { title: 'Bali Sunrise — AI 영상',     file: 'videos/bali-sunrise.mp4',           tag: 'gemini', label: 'Gemini', emoji: '🌅', desc: '발리 일출 풍경' },
-    { title: 'Paris Cafe — AI 영상',       file: 'videos/paris-cafe.mp4',             tag: 'grok',   label: 'Grok',   emoji: '☕', desc: '파리 카페 거리' },
-    { title: 'Iceland Aurora — AI 영상',   file: 'videos/iceland-aurora.mp4',         tag: 'gemini', label: 'Gemini', emoji: '🌌', desc: '아이슬란드 오로라' },
-    { title: 'NYC Timelapse — AI 영상',    file: 'videos/nyc-timelapse.mp4',          tag: 'gemini', label: 'Gemini', emoji: '🌆', desc: '뉴욕 타임랩스' },
-    { title: 'Santorini Blue — AI 영상',   file: 'videos/santorini.mp4',              tag: 'grok',   label: 'Grok',   emoji: '🏛️', desc: '산토리니 바다' },
-    { title: 'Hobby Hotting',              file: 'videos/Hobby-Hotting.mp4',          tag: 'grok',   label: 'Grok',   emoji: '🎬', desc: 'AI 생성 취미 영상' },
-    { title: 'The Sea Splash · 1',         file: 'videos/Practice-The Sea Splash1.mp4', tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상' },
-    { title: 'The Sea Splash · 2',         file: 'videos/Practice-The Sea Splash2.mp4', tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상 2편' },
+    { title: 'Hobby Hotting',      file: 'videos/Hobby-Hotting.mp4',              tag: 'grok',   label: 'Grok',   emoji: '🎬', desc: 'AI 생성 취미 영상' },
+    { title: 'The Sea Splash · 1', file: 'videos/Practice-The Sea Splash1.mp4',   tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상' },
+    { title: 'The Sea Splash · 2', file: 'videos/Practice-The Sea Splash2.mp4',   tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상 2편' },
   ];
+
+  function encSrc(file) {
+    return file.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+  }
 
   function renderVideoGallery() {
     const grid = document.getElementById('vg-grid');
     grid.innerHTML = VIDEO_LIST.map((v) => {
-      const src = v.file.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+      const src = encSrc(v.file);
       return `
-      <div class="vg-item" data-tag="${v.tag}">
+      <div class="vg-item" data-tag="${v.tag}" onclick="toggleCard(this,event)">
         <div class="vg-thumb">
           <video src="${src}" preload="auto" muted playsinline
             onloadeddata="if(this.currentTime===0)this.currentTime=1"
-            onmouseover="this.play()"
-            onmouseout="this.pause();this.currentTime=1"
+            onended="stopCard(this.closest('.vg-item'))"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           </video>
-          <div class="vg-thumb-placeholder" style="display:none">${v.emoji}</div>
+          <div class="vg-thumb-placeholder" style="display:none;position:absolute;inset:0;">${v.emoji}</div>
           <div class="vg-badge">${v.label}</div>
-          <div class="vg-play-btn" onclick="window.open('${src}','_blank')">
+          <div class="vg-overlay">
             <div class="vg-play-circle">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <polygon points="5,3 15,9 5,15" fill="#1a1a2e"/>
@@ -565,6 +554,32 @@
     }).join('') + '<div class="vg-empty" id="vg-empty" style="display:none"><span class="vg-empty-icon">🎬</span>해당 카테고리의 영상이 없습니다</div>';
   }
 
+  function toggleCard(item, e) {
+    if (item.classList.contains('playing') && e.target.tagName === 'VIDEO') return;
+    item.classList.contains('playing') ? stopCard(item) : playCard(item);
+  }
+
+  function playCard(item) {
+    document.querySelectorAll('#vg-grid .vg-item.playing').forEach(other => stopCard(other));
+    const vid = item.querySelector('video');
+    if (!vid) return;
+    item.classList.add('playing');
+    vid.muted = false;
+    vid.controls = true;
+    vid.currentTime = 0;
+    vid.play();
+  }
+
+  function stopCard(item) {
+    const vid = item.querySelector('video');
+    if (!vid) return;
+    item.classList.remove('playing');
+    vid.pause();
+    vid.muted = true;
+    vid.controls = false;
+    vid.currentTime = 1;
+  }
+
   function filterVideos(tag, tabEl) {
     document.querySelectorAll('.vg-filters .tab').forEach(t => t.classList.remove('active'));
     tabEl.classList.add('active');
@@ -572,7 +587,7 @@
     document.querySelectorAll('#vg-grid .vg-item').forEach(item => {
       const show = tag === 'all' || item.dataset.tag === tag;
       item.style.display = show ? '' : 'none';
-      if (!show) { const vid = item.querySelector('video'); if (vid) vid.pause(); }
+      if (!show) stopCard(item);
       if (show) visible++;
     });
     const empty = document.getElementById('vg-empty');
