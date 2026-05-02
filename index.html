@@ -238,10 +238,9 @@
   .vg-item {
     background: var(--glass); border: 0.5px solid var(--glass-border);
     backdrop-filter: blur(15px); border-radius: 16px; overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; cursor: pointer;
+    transition: transform 0.3s, border-color 0.3s; cursor: pointer;
   }
-  .vg-item:hover:not(.playing) { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
-  .vg-item.playing { border-color: rgba(124,106,255,0.8); box-shadow: 0 0 28px rgba(124,106,255,0.25); cursor: default; }
+  .vg-item:hover { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
   .vg-thumb {
     position: relative; aspect-ratio: 16/9; background: var(--bg2);
     display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -252,7 +251,7 @@
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
     background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s;
   }
-  .vg-item:hover:not(.playing) .vg-overlay { opacity: 1; }
+  .vg-item:hover .vg-overlay { opacity: 1; }
   .vg-play-circle {
     width: 52px; height: 52px; border-radius: 50%;
     background: rgba(255,255,255,0.92); pointer-events: none;
@@ -263,18 +262,56 @@
     position: absolute; top: 8px; left: 8px; z-index: 2;
     background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
     border: 0.5px solid rgba(255,255,255,0.18); border-radius: 100px;
-    padding: 3px 10px; font-size: 0.68rem; color: var(--accent3);
-    letter-spacing: 0.05em; transition: opacity 0.2s;
+    padding: 3px 10px; font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
   }
-  .vg-item.playing .vg-badge { opacity: 0; }
   .vg-info { padding: 0.9rem 1rem; }
   .vg-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
   .vg-meta { font-size: 0.75rem; color: var(--muted); }
   .vg-empty { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted); font-size:0.9rem; }
   .vg-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+
+  /* 영상 모달 */
+  .vg-modal-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .vg-modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .vg-modal {
+    width: min(92vw, 880px); border-radius: 20px; overflow: hidden;
+    background: var(--bg2); border: 0.5px solid var(--glass-border);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    transform: scale(0.93); transition: transform 0.25s;
+  }
+  .vg-modal-backdrop.open .vg-modal { transform: scale(1); }
+  .vg-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.75rem 1rem; border-bottom: 0.5px solid var(--glass-border);
+  }
+  .vg-modal-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .vg-modal-close {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 1.1rem; line-height: 1; padding: 4px 8px; border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .vg-modal-close:hover { color: var(--text); background: var(--glass); }
+  .vg-modal video { width: 100%; display: block; aspect-ratio: 16/9; background: #000; }
 </style>
 </head>
 <body>
+
+<!-- 영상 모달 -->
+<div class="vg-modal-backdrop" id="vg-modal-backdrop" onclick="handleBackdropClick(event)">
+  <div class="vg-modal" id="vg-modal">
+    <div class="vg-modal-header">
+      <span class="vg-modal-title" id="vg-modal-title"></span>
+      <button class="vg-modal-close" onclick="closeModal()" aria-label="닫기">✕</button>
+    </div>
+    <video id="vg-modal-video" controls playsinline></video>
+  </div>
+</div>
 
 <div class="orbs">
   <div class="orb orb1"></div>
@@ -537,12 +574,12 @@
     grid.innerHTML = VIDEO_LIST.map((v) => {
       const src  = encSrc(v.file);
       const meta = TAG_META[v.tag] || { label: v.tag, emoji: '🎬' };
+      const safeTitle = v.title.replace(/'/g, '&#39;');
       return `
-      <div class="vg-item" data-tag="${v.tag}" onclick="toggleCard(this,event)">
+      <div class="vg-item" data-tag="${v.tag}" onclick="openModal('${src}','${safeTitle}')">
         <div class="vg-thumb">
           <video src="${src}" preload="auto" muted playsinline
             onloadeddata="if(this.currentTime===0)this.currentTime=1"
-            onended="stopCard(this.closest('.vg-item'))"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           </video>
           <div class="vg-thumb-placeholder" style="display:none;position:absolute;inset:0;">${meta.emoji}</div>
@@ -563,31 +600,31 @@
     }).join('') + '<div class="vg-empty" id="vg-empty" style="display:none"><span class="vg-empty-icon">🎬</span>해당 카테고리의 영상이 없습니다</div>';
   }
 
-  function toggleCard(item, e) {
-    if (item.classList.contains('playing') && e.target.tagName === 'VIDEO') return;
-    item.classList.contains('playing') ? stopCard(item) : playCard(item);
+  function openModal(src, title) {
+    const backdrop = document.getElementById('vg-modal-backdrop');
+    const video    = document.getElementById('vg-modal-video');
+    const titleEl  = document.getElementById('vg-modal-title');
+    video.src = src;
+    titleEl.textContent = title;
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    video.play().catch(() => {});
   }
 
-  function playCard(item) {
-    document.querySelectorAll('#vg-grid .vg-item.playing').forEach(other => stopCard(other));
-    const vid = item.querySelector('video');
-    if (!vid) return;
-    item.classList.add('playing');
-    vid.muted = false;
-    vid.controls = true;
-    vid.currentTime = 0;
-    vid.play();
+  function closeModal() {
+    const backdrop = document.getElementById('vg-modal-backdrop');
+    const video    = document.getElementById('vg-modal-video');
+    backdrop.classList.remove('open');
+    video.pause();
+    video.src = '';
+    document.body.style.overflow = '';
   }
 
-  function stopCard(item) {
-    const vid = item.querySelector('video');
-    if (!vid) return;
-    item.classList.remove('playing');
-    vid.pause();
-    vid.muted = true;
-    vid.controls = false;
-    vid.currentTime = 1;
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('vg-modal-backdrop')) closeModal();
   }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
   function filterVideos(tag, tabEl) {
     document.querySelectorAll('.vg-filters .tab').forEach(t => t.classList.remove('active'));
