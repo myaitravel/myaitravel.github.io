@@ -231,6 +231,51 @@
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
   .divider { height: 0.5px; background: var(--glass-border); margin: 0 2rem; }
+
+  /* 영상 갤러리 */
+  .vg-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .vg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+  .vg-item {
+    background: var(--glass); border: 0.5px solid var(--glass-border);
+    backdrop-filter: blur(15px); border-radius: 16px; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .vg-item:hover { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
+  .vg-thumb {
+    position: relative; aspect-ratio: 16/9; background: var(--bg2);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .vg-thumb video { width: 100%; height: 100%; object-fit: cover; }
+  .vg-thumb-placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+  }
+  .vg-play-btn {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s; cursor: pointer;
+  }
+  .vg-item:hover .vg-play-btn { opacity: 1; }
+  .vg-play-circle {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .vg-play-circle svg { margin-left: 3px; }
+  .vg-badge {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    border-radius: 100px; padding: 3px 10px;
+    font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
+  }
+  .vg-info { padding: 0.9rem 1rem; }
+  .vg-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
+  .vg-meta { font-size: 0.75rem; color: var(--muted); }
+  .vg-empty {
+    grid-column: 1/-1; text-align: center; padding: 3rem 1rem;
+    color: var(--muted); font-size: 0.9rem; line-height: 1.8;
+  }
+  .vg-empty .vg-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
 </style>
 </head>
 <body>
@@ -247,6 +292,7 @@
     <a href="#about">소개</a>
     <a href="#hobbies">취미</a>
     <a href="#gallery">갤러리</a>
+    <a href="#videos">영상</a>
     <a href="#tools">도구</a>
     <a href="#contact">연락</a>
   </div>
@@ -382,6 +428,28 @@
 
 <div class="divider"></div>
 
+<!-- VIDEO GALLERY -->
+<section id="videos" class="reveal">
+  <div class="gallery-header">
+    <div>
+      <div class="section-label">Grok video gallery</div>
+      <div class="section-title" style="margin-bottom:0">영상 갤러리 ✦</div>
+    </div>
+    <div class="gallery-tabs vg-filters">
+      <div class="tab active" onclick="filterVideos('all',this)">전체</div>
+      <div class="tab" onclick="filterVideos('grok',this)">Grok</div>
+      <div class="tab" onclick="filterVideos('gemini',this)">Gemini</div>
+      <div class="tab" onclick="filterVideos('travel',this)">여행</div>
+    </div>
+  </div>
+  <div class="vg-grid" id="vg-grid"></div>
+  <p style="margin-top:1.5rem; color:var(--muted); font-size:0.83rem; text-align:center;">
+    ✦ videos/ 폴더에 파일을 추가하면 카드가 자동으로 채워집니다
+  </p>
+</section>
+
+<div class="divider"></div>
+
 <!-- TOOLS -->
 <section id="tools" class="reveal">
   <div class="section-label">tools I use</div>
@@ -446,12 +514,69 @@
   });
 
   function filterGallery(type, tabEl) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.gallery-tabs .tab').forEach(t => t.classList.remove('active'));
     tabEl.classList.add('active');
     document.querySelectorAll('.gallery-item').forEach(item => {
       item.style.display = (type === 'all' || item.dataset.type === type) ? 'block' : 'none';
     });
   }
+
+  // ===== 영상 갤러리 =====
+  const VIDEO_LIST = [
+    { title: 'Hobby Hotting',        file: 'videos/Hobby-Hotting.mp4',                tag: 'grok',   label: 'Grok',   emoji: '🎬', desc: 'AI 생성 취미 영상' },
+    { title: 'The Sea Splash · 1',   file: 'videos/Practice-The Sea Splash1.mp4',     tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상' },
+    { title: 'The Sea Splash · 2',   file: 'videos/Practice-The Sea Splash2.mp4',     tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상 2편' },
+  ];
+
+  let currentVideoTag = 'all';
+
+  function renderVideoGallery() {
+    const grid = document.getElementById('vg-grid');
+    const filtered = currentVideoTag === 'all' ? VIDEO_LIST : VIDEO_LIST.filter(v => v.tag === currentVideoTag);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="vg-empty"><span class="vg-empty-icon">🎬</span>해당 카테고리의 영상이 없습니다</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map((v, i) => `
+      <div class="vg-item" data-tag="${v.tag}">
+        <div class="vg-thumb">
+          <video src="${v.file}" preload="metadata" muted playsinline
+            onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          </video>
+          <div class="vg-thumb-placeholder" style="display:none">${v.emoji}</div>
+          <div class="vg-badge">${v.label}</div>
+          <div class="vg-play-btn" onclick="playVideo(${i})">
+            <div class="vg-play-circle">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <polygon points="5,3 15,9 5,15" fill="#1a1a2e"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="vg-info">
+          <div class="vg-title">${v.title}</div>
+          <div class="vg-meta">${v.desc}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterVideos(tag, tabEl) {
+    document.querySelectorAll('.vg-filters .tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+    currentVideoTag = tag;
+    renderVideoGallery();
+  }
+
+  function playVideo(idx) {
+    const v = VIDEO_LIST[idx];
+    window.open(v.file, '_blank');
+  }
+
+  renderVideoGallery();
 </script>
 </body>
 </html>
