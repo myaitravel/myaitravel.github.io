@@ -514,11 +514,19 @@
   }
 
   // ===== 영상 갤러리 =====
+  // 새 영상 추가: { title, file, tag } 3개만 작성하면 됩니다
   const VIDEO_LIST = [
-    { title: 'Hobby Hotting',      file: 'videos/Hobby-Hotting.mp4',              tag: 'grok',   label: 'Grok',   emoji: '🎬', desc: 'AI 생성 취미 영상' },
-    { title: 'The Sea Splash · 1', file: 'videos/Practice-The Sea Splash1.mp4',   tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상' },
-    { title: 'The Sea Splash · 2', file: 'videos/Practice-The Sea Splash2.mp4',   tag: 'travel', label: 'Travel', emoji: '🌊', desc: '바다 스플래시 AI 영상 2편' },
+    { title: 'Hobby Hotting',      file: 'videos/Hobby-Hotting.mp4',            tag: 'grok'   },
+    { title: 'The Sea Splash · 1', file: 'videos/Practice-The Sea Splash1.mp4', tag: 'travel' },
+    { title: 'The Sea Splash · 2', file: 'videos/Practice-The Sea Splash2.mp4', tag: 'travel' },
   ];
+
+  // 태그 표시 이름 · 이모지 — 새 태그 추가 시 여기만 편집
+  const TAG_META = {
+    grok:   { label: 'Grok',   emoji: '🤖' },
+    gemini: { label: 'Gemini', emoji: '✨' },
+    travel: { label: 'Travel', emoji: '🌍' },
+  };
 
   function encSrc(file) {
     return file.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
@@ -527,7 +535,8 @@
   function renderVideoGallery() {
     const grid = document.getElementById('vg-grid');
     grid.innerHTML = VIDEO_LIST.map((v) => {
-      const src = encSrc(v.file);
+      const src  = encSrc(v.file);
+      const meta = TAG_META[v.tag] || { label: v.tag, emoji: '🎬' };
       return `
       <div class="vg-item" data-tag="${v.tag}" onclick="toggleCard(this,event)">
         <div class="vg-thumb">
@@ -536,8 +545,8 @@
             onended="stopCard(this.closest('.vg-item'))"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           </video>
-          <div class="vg-thumb-placeholder" style="display:none;position:absolute;inset:0;">${v.emoji}</div>
-          <div class="vg-badge">${v.label}</div>
+          <div class="vg-thumb-placeholder" style="display:none;position:absolute;inset:0;">${meta.emoji}</div>
+          <div class="vg-badge">${meta.label}</div>
           <div class="vg-overlay">
             <div class="vg-play-circle">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -548,7 +557,7 @@
         </div>
         <div class="vg-info">
           <div class="vg-title">${v.title}</div>
-          <div class="vg-meta">${v.desc}</div>
+          <div class="vg-meta">${meta.label} · AI 영상</div>
         </div>
       </div>`;
     }).join('') + '<div class="vg-empty" id="vg-empty" style="display:none"><span class="vg-empty-icon">🎬</span>해당 카테고리의 영상이 없습니다</div>';
