@@ -3,644 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Space</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<title>myaitravel</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #060812;
-    --bg2: #0d1020;
-    --glass: rgba(255,255,255,0.05);
-    --glass-border: rgba(255,255,255,0.12);
-    --glass-hover: rgba(255,255,255,0.09);
-    --text: #f0f0ff;
-    --muted: rgba(240,240,255,0.5);
-    --accent: #7c6aff;
-    --accent2: #ff6ab0;
-    --accent3: #6af0ff;
-    --glow: rgba(124,106,255,0.3);
-  }
-  html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: #f2f2f7;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
+    padding: 48px 24px;
+    color: #1c1c1e;
   }
 
-  .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; animation: drift 12s ease-in-out infinite alternate; }
-  .orb1 { width: 500px; height: 500px; background: #4a3aff; top: -100px; left: -100px; animation-delay: 0s; }
-  .orb2 { width: 400px; height: 400px; background: #ff3a8a; bottom: 100px; right: -80px; animation-delay: -4s; }
-  .orb3 { width: 350px; height: 350px; background: #3aefff; top: 40%; left: 40%; animation-delay: -8s; }
-  @keyframes drift {
-    0% { transform: translate(0,0) scale(1); }
-    100% { transform: translate(30px,40px) scale(1.08); }
+  header { margin-bottom: 24px; }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
   }
 
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 1rem 2.5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(6,8,18,0.6);
-    backdrop-filter: blur(20px);
-    border-bottom: 0.5px solid var(--glass-border);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 1.2rem;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .nav-links { display: flex; gap: 2rem; }
-  .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--text); }
-
-  .hero {
-    position: relative; z-index: 1;
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 6rem 2rem 4rem;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    padding: 6px 16px; border-radius: 100px; font-size: 0.78rem;
-    color: var(--accent3); margin-bottom: 1.8rem;
-    animation: fadeUp 0.8s ease both;
-  }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 8vw, 5.5rem);
-    font-weight: 800; line-height: 1.1;
-    animation: fadeUp 0.8s 0.15s ease both;
-  }
-  .hero h1 span {
-    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .hero-sub {
-    font-size: 1.05rem; color: var(--muted); max-width: 480px;
-    margin: 1.2rem auto 2.5rem; line-height: 1.7;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeUp 0.8s 0.45s ease both; }
-  .btn-primary {
-    padding: 0.75rem 2rem; border-radius: 100px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; font-weight: 500; font-size: 0.9rem;
-    border: none; cursor: pointer; text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 0 30px var(--glow);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow); }
-  .btn-glass {
-    padding: 0.75rem 2rem; border-radius: 100px;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    color: var(--text); font-size: 0.9rem;
-    cursor: pointer; text-decoration: none; transition: background 0.2s;
-  }
-  .btn-glass:hover { background: var(--glass-hover); }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+    background: #e5e5ea;
+    border-radius: 12px;
+    padding: 4px;
   }
 
-  section { position: relative; z-index: 1; padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .section-label { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.8rem; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 3rem; }
-
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  @media(max-width:640px){ .about-grid { grid-template-columns: 1fr; } .nav-links { gap: 1rem; } }
-  .glass-card {
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(20px); border-radius: 20px; padding: 2rem;
-    transition: background 0.3s, transform 0.3s;
-  }
-  .glass-card:hover { background: var(--glass-hover); transform: translateY(-4px); }
-  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
-  .card-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; }
-  .card-text { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
-
-  .hobby-chips { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 3rem; }
-  .chip {
-    padding: 0.5rem 1.2rem; border-radius: 100px;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    font-size: 0.85rem; color: var(--text); cursor: pointer;
-    transition: all 0.2s; backdrop-filter: blur(10px);
-  }
-  .chip:hover, .chip.active {
-    background: rgba(124,106,255,0.2); border-color: var(--accent); color: #c4baff;
-    box-shadow: 0 0 20px rgba(124,106,255,0.2);
-  }
-
-  .gallery-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-  .gallery-tabs { display: flex; gap: 0.5rem; }
   .tab {
-    padding: 0.45rem 1.1rem; border-radius: 100px;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    font-size: 0.8rem; color: var(--muted); cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);
-  }
-  .tab.active { background: rgba(124,106,255,0.2); border-color: var(--accent); color: #c4baff; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-  .gallery-item {
-    border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 4/3;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    cursor: pointer; transition: transform 0.3s;
-  }
-  .gallery-item:hover { transform: scale(1.03); }
-  .gallery-item:hover .gallery-overlay { opacity: 1; }
-
-  /* --- 실제 이미지로 교체하려면 아래 .fake-img를 <img> 태그로 바꾸세요 --- */
-  .fake-img {
-    width: 100%; height: 100%;
-    display: flex; align-items: flex-end;
-    padding: 1rem; position: relative; overflow: hidden;
-  }
-  .fake-img::before { content: ''; position: absolute; inset: 0; transition: transform 0.4s; }
-  .gallery-item:hover .fake-img::before { transform: scale(1.08); }
-  .img-tokyo::before    { background: linear-gradient(160deg, #0a0520 0%, #1a0840 40%, #ff4488 70%, #ffaa00 100%); }
-  .img-paris::before    { background: linear-gradient(160deg, #050a30 0%, #0a2060 40%, #4488ff 75%, #aaddff 100%); }
-  .img-bali::before     { background: linear-gradient(160deg, #061810 0%, #0a3020 35%, #00aa55 65%, #ffee44 100%); }
-  .img-nyc::before      { background: linear-gradient(160deg, #050505 0%, #1a1a2e 40%, #e94560 70%, #ffd700 100%); }
-  .img-iceland::before  { background: linear-gradient(160deg, #020820 0%, #041030 35%, #1a44aa 60%, #44ffdd 80%, #ffffff 100%); }
-  .img-santorini::before{ background: linear-gradient(160deg, #0a1540 0%, #1a3080 40%, #4488ee 65%, #ffffff 85%, #ffee99 100%); }
-
-  .img-label { position: relative; z-index: 1; color: #fff; font-size: 0.8rem; font-weight: 500; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
-  .ai-badge {
-    position: absolute; top: 10px; right: 10px; z-index: 2;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-    border: 0.5px solid rgba(255,255,255,0.2);
-    border-radius: 100px; padding: 3px 10px;
-    font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
-  }
-  .gallery-overlay {
-    position: absolute; inset: 0; background: rgba(0,0,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.2s; z-index: 3; font-size: 0.85rem; color: #fff;
-  }
-
-  .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
-  .app-card {
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(15px); border-radius: 16px; padding: 1.2rem;
-    display: flex; align-items: center; gap: 1rem;
-    text-decoration: none; color: var(--text);
-    transition: all 0.3s;
-  }
-  .app-card:hover { background: var(--glass-hover); transform: translateY(-3px); border-color: var(--accent); }
-  .app-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
-  .app-name { font-size: 0.88rem; font-weight: 500; margin-bottom: 3px; }
-  .app-sub { font-size: 0.75rem; color: var(--muted); }
-  .tool-card {
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(15px); border-radius: 16px; padding: 1.5rem;
-    display: flex; flex-direction: column; gap: 0.8rem; transition: all 0.3s;
-  }
-  .tool-card:hover { background: var(--glass-hover); transform: translateY(-3px); }
-  .tool-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; }
-  .tool-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; }
-  .tool-tag { font-size: 0.72rem; color: var(--accent2); letter-spacing: 0.05em; }
-
-  .contact-box {
+    flex: 1;
     text-align: center;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(20px); border-radius: 24px; padding: 3.5rem 2rem;
+    padding: 8px 0;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #8e8e93;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
   }
-  .contact-box p { color: var(--muted); margin: 1rem 0 2rem; line-height: 1.7; }
-  .social-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-  .social-link {
-    padding: 0.65rem 1.5rem; border-radius: 100px;
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    color: var(--text); text-decoration: none; font-size: 0.85rem;
-    transition: all 0.2s; backdrop-filter: blur(10px);
+
+  .tab.active {
+    background: #fff;
+    color: #1c1c1e;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   }
-  .social-link:hover { background: rgba(124,106,255,0.15); border-color: var(--accent); color: #c4baff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+  }
+
+  .card:active { transform: scale(0.97); }
+
+  .icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  .card-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1c1c1e;
+    word-break: break-all;
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+
+  .card-desc { font-size: 12px; color: #8e8e93; }
+
+  .bg-red    { background: #fff0f0; }
+  .bg-blue   { background: #eef4ff; }
+  .bg-pink   { background: #fff0f8; }
+  .bg-orange { background: #fff4e6; }
+  .bg-teal   { background: #e6faf5; }
+  .bg-purple { background: #f3eeff; }
+  .bg-yellow { background: #fffbe6; }
+  .bg-cyan   { background: #e6f9ff; }
+  .bg-green  { background: #edfff4; }
+  .bg-indigo { background: #eef0ff; }
+  .bg-rose   { background: #fff0f4; }
+  .bg-lime   { background: #f4ffe6; }
+  .bg-gray   { background: #f2f2f2; }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 0;
+    color: #aeaeb2;
+    font-size: 14px;
+  }
 
   footer {
-    position: relative; z-index: 1;
-    text-align: center; padding: 2rem;
-    color: var(--muted); font-size: 0.8rem;
-    border-top: 0.5px solid var(--glass-border);
+    margin-top: 40px;
+    font-size: 12px;
+    color: #aeaeb2;
+    text-align: center;
   }
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .divider { height: 0.5px; background: var(--glass-border); margin: 0 2rem; }
 
-  /* 영상 갤러리 */
-  .vg-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .vg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
-  .vg-item {
-    background: var(--glass); border: 0.5px solid var(--glass-border);
-    backdrop-filter: blur(15px); border-radius: 16px; overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s; cursor: pointer;
+  @media (max-width: 480px) {
+    body { padding: 32px 16px; }
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .card { padding: 12px; border-radius: 14px; }
+    .icon-wrap { width: 40px; height: 40px; font-size: 18px; border-radius: 10px; margin-bottom: 8px; }
+    .card-name { font-size: 11px; }
+    .card-desc { font-size: 10px; }
   }
-  .vg-item:hover { transform: translateY(-4px); border-color: rgba(124,106,255,0.5); }
-  .vg-thumb {
-    position: relative; aspect-ratio: 16/9; background: var(--bg2);
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-  }
-  .vg-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .vg-thumb-placeholder { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem; }
-  .vg-overlay {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s;
-  }
-  .vg-item:hover .vg-overlay { opacity: 1; }
-  .vg-play-circle {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: rgba(255,255,255,0.92); pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .vg-play-circle svg { margin-left: 4px; }
-  .vg-badge {
-    position: absolute; top: 8px; left: 8px; z-index: 2;
-    background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
-    border: 0.5px solid rgba(255,255,255,0.18); border-radius: 100px;
-    padding: 3px 10px; font-size: 0.68rem; color: var(--accent3); letter-spacing: 0.05em;
-  }
-  .vg-info { padding: 0.9rem 1rem; }
-  .vg-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; line-height: 1.4; }
-  .vg-meta { font-size: 0.75rem; color: var(--muted); }
-  .vg-empty { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted); font-size:0.9rem; }
-  .vg-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
 
-  /* 영상 모달 */
-  .vg-modal-backdrop {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.25s;
+  @media (max-width: 320px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
   }
-  .vg-modal-backdrop.open { opacity: 1; pointer-events: auto; }
-  .vg-modal {
-    width: min(92vw, 880px); border-radius: 20px; overflow: hidden;
-    background: var(--bg2); border: 0.5px solid var(--glass-border);
-    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-    transform: scale(0.93); transition: transform 0.25s;
-  }
-  .vg-modal-backdrop.open .vg-modal { transform: scale(1); }
-  .vg-modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.75rem 1rem; border-bottom: 0.5px solid var(--glass-border);
-  }
-  .vg-modal-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-  .vg-modal-close {
-    background: none; border: none; cursor: pointer; color: var(--muted);
-    font-size: 1.1rem; line-height: 1; padding: 4px 8px; border-radius: 8px;
-    transition: color 0.2s, background 0.2s;
-  }
-  .vg-modal-close:hover { color: var(--text); background: var(--glass); }
-  .vg-modal video { width: 100%; display: block; aspect-ratio: 16/9; background: #000; }
 </style>
 </head>
 <body>
 
-<!-- 영상 모달 -->
-<div class="vg-modal-backdrop" id="vg-modal-backdrop" onclick="handleBackdropClick(event)">
-  <div class="vg-modal" id="vg-modal">
-    <div class="vg-modal-header">
-      <span class="vg-modal-title" id="vg-modal-title"></span>
-      <button class="vg-modal-close" onclick="closeModal()" aria-label="닫기">✕</button>
-    </div>
-    <video id="vg-modal-video" controls playsinline></video>
+<header>
+  <h1>myaitravel</h1>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('repos')">Repos</div>
+  <div class="tab" onclick="switchTab('apps')">Apps</div>
+</div>
+
+<!-- REPOS TAB -->
+<div class="panel active" id="panel-repos">
+  <div class="grid">
+    <a class="card" href="https://github.com/myaitravel/bookmark-hub" target="_blank">
+      <div class="icon-wrap bg-red">🔖</div>
+      <div class="card-name">bookmark-hub</div>
+      <div class="card-desc">북마크 관리</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/memo" target="_blank">
+      <div class="icon-wrap bg-blue">📝</div>
+      <div class="card-name">memo</div>
+      <div class="card-desc">메모</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/clips" target="_blank">
+      <div class="icon-wrap bg-pink">✂️</div>
+      <div class="card-name">clips</div>
+      <div class="card-desc">클립 관리</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/cook-cooking" target="_blank">
+      <div class="icon-wrap bg-orange">🍳</div>
+      <div class="card-name">cook-cooking</div>
+      <div class="card-desc">요리</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/study-alarm" target="_blank">
+      <div class="icon-wrap bg-teal">⏰</div>
+      <div class="card-name">study-alarm</div>
+      <div class="card-desc">학습 알람</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/myaitravel.github.io" target="_blank">
+      <div class="icon-wrap bg-indigo">🌐</div>
+      <div class="card-name">myaitravel.github.io</div>
+      <div class="card-desc">깃허브 페이지</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/weather" target="_blank">
+      <div class="icon-wrap bg-yellow">🌤️</div>
+      <div class="card-name">weather</div>
+      <div class="card-desc">날씨</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/exchange" target="_blank">
+      <div class="icon-wrap bg-cyan">💱</div>
+      <div class="card-name">exchange</div>
+      <div class="card-desc">환율</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/card-tracker" target="_blank">
+      <div class="icon-wrap bg-green">💳</div>
+      <div class="card-name">card-tracker</div>
+      <div class="card-desc">카드 추적</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/per-radar" target="_blank">
+      <div class="icon-wrap bg-purple">📡</div>
+      <div class="card-name">per-radar</div>
+      <div class="card-desc">레이더</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/study-Englishword" target="_blank">
+      <div class="icon-wrap bg-rose">📚</div>
+      <div class="card-name">study-Englishword</div>
+      <div class="card-desc">영단어 학습</div>
+    </a>
+    <a class="card" href="https://github.com/myaitravel/stock-english-tutor" target="_blank">
+      <div class="icon-wrap bg-lime">📈</div>
+      <div class="card-name">stock-english-tutor</div>
+      <div class="card-desc">주식 영어 튜터</div>
+    </a>
   </div>
 </div>
 
-<div class="orbs">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
-
-<nav>
-  <div class="nav-logo">✦ myspace</div>
-  <div class="nav-links">
-    <a href="#about">소개</a>
-    <a href="#hobbies">취미</a>
-    <a href="#gallery">갤러리</a>
-    <a href="#videos">영상</a>
-    <a href="#tools">도구</a>
-    <a href="#contact">연락</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">
-    <div class="dot"></div>
-    2026 · 나만의 공간
-  </div>
-  <h1>안녕, 나는<br><span>탐험가야</span></h1>
-  <p class="hero-sub">세상 모든 곳을 상상하고, 기록하고, 꿈꾸는 사람.<br>아직 가지 못한 곳들을 AI로 먼저 경험해요.</p>
-  <div class="hero-cta">
-    <a href="#gallery" class="btn-primary">✦ AI 여행 갤러리 보기</a>
-    <a href="#about" class="btn-glass">나 알아가기</a>
+<!-- APPS TAB -->
+<div class="panel" id="panel-apps">
+  <div class="grid" id="apps-grid">
+    <div class="empty">불러오는 중...</div>
   </div>
 </div>
 
-<div class="divider"></div>
-
-<!-- ABOUT -->
-<section id="about" class="reveal">
-  <div class="section-label">about me</div>
-  <div class="section-title">나에 대해 ✦</div>
-  <div class="about-grid">
-    <div class="glass-card">
-      <div class="card-icon">🌍</div>
-      <div class="card-title">탐험하는 사람</div>
-      <div class="card-text">여행을 못 가도 괜찮아요. AI로 만든 사진과 영상으로 세계 구석구석을 대리만족 중. 도쿄 골목부터 아이슬란드 오로라까지, 상상의 여행은 계속됩니다.</div>
-    </div>
-    <div class="glass-card">
-      <div class="card-icon">🤖</div>
-      <div class="card-title">AI 탐험가</div>
-      <div class="card-text">Grok, Gemini 같은 AI 도구로 사진과 영상을 만들고 있어요. 아직 가지 못한 곳의 풍경을 직접 생성하는 게 요즘 가장 재미있는 일.</div>
-    </div>
-    <div class="glass-card">
-      <div class="card-icon">💻</div>
-      <div class="card-title">만드는 사람</div>
-      <div class="card-text">GitHub Pages로 이 페이지도 직접 만들었어요. 코딩이 무섭지 않고, Claude가 있으니까요. 아이디어를 현실로 만드는 과정이 좋아요.</div>
-    </div>
-    <div class="glass-card">
-      <div class="card-icon">🌙</div>
-      <div class="card-title">야행성 크리에이터</div>
-      <div class="card-text">밤 12시가 넘어서 작업이 제일 잘 돼요. 음악 틀어두고 AI 프롬프트 짜거나 새 페이지 구상하는 게 일상의 작은 행복.</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- HOBBIES -->
-<section id="hobbies" class="reveal">
-  <div class="section-label">hobbies</div>
-  <div class="section-title">취미 & 관심사 ✦</div>
-  <div class="hobby-chips">
-    <span class="chip active">🌏 여행 (대리만족)</span>
-    <span class="chip">🤖 AI 이미지 생성</span>
-    <span class="chip">🎬 AI 영상 제작</span>
-    <span class="chip">💻 웹 만들기</span>
-    <span class="chip">🎵 음악 감상</span>
-    <span class="chip">📸 사진 편집</span>
-    <span class="chip">🌙 새벽 감성</span>
-    <span class="chip">☕ 카페 탐방</span>
-  </div>
-  <div class="about-grid">
-    <div class="glass-card">
-      <div class="card-title">🎯 요즘 빠진 것</div>
-      <div class="card-text">Grok으로 여행지 이미지 생성 → Gemini로 영상 변환 → 여기 올리기. 이 플로우가 너무 재미있어서 매일 하고 있어요.</div>
-    </div>
-    <div class="glass-card">
-      <div class="card-title">📌 다음 목표</div>
-      <div class="card-text">AI로 단편 여행 다큐 만들어보기. 실제 여행을 못 가도 내러티브가 있는 콘텐츠를 만드는 게 꿈이에요.</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- GALLERY -->
-<section id="gallery" class="reveal">
-  <div class="gallery-header">
-    <div>
-      <div class="section-label">AI travel gallery</div>
-      <div class="section-title" style="margin-bottom:0">AI 여행 갤러리 ✦</div>
-    </div>
-    <div class="gallery-tabs">
-      <div class="tab active" onclick="filterGallery('all', this)">전체</div>
-      <div class="tab" onclick="filterGallery('photo', this)">AI 사진</div>
-      <div class="tab" onclick="filterGallery('video', this)">AI 영상</div>
-    </div>
-  </div>
-  <div class="gallery-grid" id="gallery-grid">
-    <!--
-      실제 AI 사진으로 교체하려면 아래 .fake-img 블록 대신 이렇게 쓰세요:
-      <img src="your-image.jpg" alt="Tokyo" style="width:100%;height:100%;object-fit:cover;">
-    -->
-    <div class="gallery-item" data-type="photo">
-      <div class="fake-img img-tokyo"><div class="img-label">🗼 Tokyo, Japan</div></div>
-      <div class="ai-badge">AI Photo</div>
-      <div class="gallery-overlay">Grok으로 생성 →</div>
-    </div>
-    <div class="gallery-item" data-type="video">
-      <div class="fake-img img-paris"><div class="img-label">🗼 Paris, France</div></div>
-      <div class="ai-badge">AI Video</div>
-      <div class="gallery-overlay">Gemini로 생성 →</div>
-    </div>
-    <div class="gallery-item" data-type="photo">
-      <div class="fake-img img-bali"><div class="img-label">🌴 Bali, Indonesia</div></div>
-      <div class="ai-badge">AI Photo</div>
-      <div class="gallery-overlay">Grok으로 생성 →</div>
-    </div>
-    <div class="gallery-item" data-type="video">
-      <div class="fake-img img-nyc"><div class="img-label">🌆 New York, USA</div></div>
-      <div class="ai-badge">AI Video</div>
-      <div class="gallery-overlay">Gemini로 생성 →</div>
-    </div>
-    <div class="gallery-item" data-type="photo">
-      <div class="fake-img img-iceland"><div class="img-label">🌌 Iceland — Aurora</div></div>
-      <div class="ai-badge">AI Photo</div>
-      <div class="gallery-overlay">Grok으로 생성 →</div>
-    </div>
-    <div class="gallery-item" data-type="photo">
-      <div class="fake-img img-santorini"><div class="img-label">🏛️ Santorini, Greece</div></div>
-      <div class="ai-badge">AI Photo</div>
-      <div class="gallery-overlay">Grok으로 생성 →</div>
-    </div>
-  </div>
-  <p style="margin-top:1.5rem; color:var(--muted); font-size:0.83rem; text-align:center;">
-    ✦ 모든 이미지/영상은 AI로 직접 생성했습니다 · 실제 파일로 교체 가능
-  </p>
-</section>
-
-<div class="divider"></div>
-
-<!-- VIDEO GALLERY -->
-<section id="videos" class="reveal">
-  <div class="gallery-header">
-    <div>
-      <div class="section-label">video gallery</div>
-      <div class="section-title" style="margin-bottom:0">영상 갤러리 ✦</div>
-    </div>
-    <div class="vg-filters">
-      <div class="tab active" onclick="filterVideos('all',this)">전체</div>
-      <div class="tab" onclick="filterVideos('grok',this)">Grok</div>
-      <div class="tab" onclick="filterVideos('travel',this)">여행</div>
-    </div>
-  </div>
-  <div class="vg-grid" id="vg-grid"></div>
-</section>
-
-<div class="divider"></div>
-
-<!-- TOOLS -->
-<section id="tools" class="reveal">
-  <div class="section-label">tools I use</div>
-  <div class="section-title">사용하는 도구 ✦</div>
-  <div class="tools-grid">
-    <div class="tool-card">
-      <div class="tool-name">🤖 Grok</div>
-      <div class="tool-tag">AI 이미지 생성</div>
-      <div class="tool-desc">X(트위터) AI. 여행지 사진 생성에 자주 써요. 프롬프트 반응이 빠르고 스타일이 풍부해요.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tool-name">✨ Gemini</div>
-      <div class="tool-tag">AI 영상 생성</div>
-      <div class="tool-desc">Google AI. 이미지→영상 변환이 가능해서 AI 여행 영상 만들 때 메인으로 사용 중.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tool-name">💬 Claude</div>
-      <div class="tool-tag">코딩 & 아이디어</div>
-      <div class="tool-desc">이 홈페이지도 Claude로 만들었어요. 코드부터 글쓰기까지 뭐든 물어볼 수 있는 친구.</div>
-    </div>
-    <div class="tool-card">
-      <div class="tool-name">🐙 GitHub</div>
-      <div class="tool-tag">호스팅</div>
-      <div class="tool-desc">GitHub Pages로 이 사이트를 무료 호스팅 중. 코드 올리면 바로 배포되는 게 마법같아요.</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- CONTACT -->
-<section id="contact" class="reveal">
-  <div class="contact-box">
-    <div class="section-label" style="text-align:center">contact</div>
-    <div class="section-title" style="text-align:center; margin-bottom:0">연락해요 ✦</div>
-    <p>AI 여행 콘텐츠, 웹 만들기, 아니면 그냥 수다도 좋아요.<br>언제든 편하게 연락 주세요.</p>
-    <div class="social-links">
-      <a href="mailto:your@email.com" class="social-link">✉️ 이메일</a>
-      <a href="https://github.com/your-id" class="social-link">🐙 GitHub</a>
-      <a href="https://instagram.com/your-id" class="social-link">📸 인스타그램</a>
-      <a href="https://x.com/your-id" class="social-link">🐦 X (트위터)</a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p>✦ Made with Claude & GitHub Pages · 2026</p>
-</footer>
+<footer>myaitravel · github pages</footer>
 
 <script>
-  const revealEls = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  revealEls.forEach(el => obs.observe(el));
-
-  document.querySelectorAll('.chip').forEach(c => {
-    c.addEventListener('click', function() {
-      document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-      this.classList.add('active');
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', ['repos','apps'][i] === name);
     });
-  });
-
-  function filterGallery(type, tabEl) {
-    document.querySelectorAll('.gallery-tabs .tab').forEach(t => t.classList.remove('active'));
-    tabEl.classList.add('active');
-    document.querySelectorAll('.gallery-item').forEach(item => {
-      item.style.display = (type === 'all' || item.dataset.type === type) ? 'block' : 'none';
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'panel-' + name);
     });
+    if (name === 'apps') loadApps();
   }
 
-  // ===== 영상 갤러리 =====
-  // 새 영상 추가: { title, file, tag } 3개만 작성하면 됩니다
-  const VIDEO_LIST = [
-    { title: 'Hobby Hotting',      file: 'videos/Hobby-Hotting.mp4',            tag: 'grok'   },
-    { title: 'The Sea Splash · 1', file: 'videos/Practice-The Sea Splash1.mp4', tag: 'travel' },
-    { title: 'The Sea Splash · 2', file: 'videos/Practice-The Sea Splash2.mp4', tag: 'travel' },
-  ];
+  let appsLoaded = false;
 
-  // 태그 표시 이름 · 이모지 — 새 태그 추가 시 여기만 편집
-  const TAG_META = {
-    grok:   { label: 'Grok',   emoji: '🤖' },
-    gemini: { label: 'Gemini', emoji: '✨' },
-    travel: { label: 'Travel', emoji: '🌍' },
-  };
-
-  function encSrc(file) {
-    return file.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+  function loadApps() {
+    if (appsLoaded) return;
+    appsLoaded = true;
+    fetch('https://myaitravel.github.io/bookmark-hub/apps.json')
+      .then(r => r.json())
+      .then(apps => {
+        const grid = document.getElementById('apps-grid');
+        if (!apps.length) {
+          grid.innerHTML = '<div class="empty">아직 앱이 없어요</div>';
+          return;
+        }
+        grid.innerHTML = apps.map(app => `
+          <a class="card" href="${app.url}" target="_blank">
+            <div class="icon-wrap ${app.color}">${app.icon}</div>
+            <div class="card-name">${app.name}</div>
+            <div class="card-desc">${app.desc}</div>
+          </a>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('apps-grid').innerHTML = '<div class="empty">앱 목록을 불러올 수 없어요</div>';
+      });
   }
-
-  function renderVideoGallery() {
-    const grid = document.getElementById('vg-grid');
-    grid.innerHTML = VIDEO_LIST.map((v) => {
-      const src  = encSrc(v.file);
-      const meta = TAG_META[v.tag] || { label: v.tag, emoji: '🎬' };
-      const safeTitle = v.title.replace(/'/g, '&#39;');
-      return `
-      <div class="vg-item" data-tag="${v.tag}" onclick="openModal('${src}','${safeTitle}')">
-        <div class="vg-thumb">
-          <video src="${src}" preload="auto" muted playsinline
-            onloadeddata="if(this.currentTime===0)this.currentTime=1"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          </video>
-          <div class="vg-thumb-placeholder" style="display:none;position:absolute;inset:0;">${meta.emoji}</div>
-          <div class="vg-badge">${meta.label}</div>
-          <div class="vg-overlay">
-            <div class="vg-play-circle">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <polygon points="5,3 15,9 5,15" fill="#1a1a2e"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div class="vg-info">
-          <div class="vg-title">${v.title}</div>
-          <div class="vg-meta">${meta.label} · AI 영상</div>
-        </div>
-      </div>`;
-    }).join('') + '<div class="vg-empty" id="vg-empty" style="display:none"><span class="vg-empty-icon">🎬</span>해당 카테고리의 영상이 없습니다</div>';
-  }
-
-  function openModal(src, title) {
-    const backdrop = document.getElementById('vg-modal-backdrop');
-    const video    = document.getElementById('vg-modal-video');
-    const titleEl  = document.getElementById('vg-modal-title');
-    video.src = src;
-    titleEl.textContent = title;
-    backdrop.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    video.play().catch(() => {});
-  }
-
-  function closeModal() {
-    const backdrop = document.getElementById('vg-modal-backdrop');
-    const video    = document.getElementById('vg-modal-video');
-    backdrop.classList.remove('open');
-    video.pause();
-    video.src = '';
-    document.body.style.overflow = '';
-  }
-
-  function handleBackdropClick(e) {
-    if (e.target === document.getElementById('vg-modal-backdrop')) closeModal();
-  }
-
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  function filterVideos(tag, tabEl) {
-    document.querySelectorAll('.vg-filters .tab').forEach(t => t.classList.remove('active'));
-    tabEl.classList.add('active');
-    let visible = 0;
-    document.querySelectorAll('#vg-grid .vg-item').forEach(item => {
-      const show = tag === 'all' || item.dataset.tag === tag;
-      item.style.display = show ? '' : 'none';
-      if (!show) stopCard(item);
-      if (show) visible++;
-    });
-    const empty = document.getElementById('vg-empty');
-    if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
-  }
-
-  renderVideoGallery();
 </script>
+
 </body>
 </html>
