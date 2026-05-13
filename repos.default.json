@@ -1,0 +1,14 @@
+[
+  { "name": "bookmark-hub",        "url": "https://github.com/myaitravel/bookmark-hub",        "icon": "🔖", "color": "bg-red",    "desc": "북마크 관리" },
+  { "name": "memo",                "url": "https://github.com/myaitravel/memo",                "icon": "📝", "color": "bg-blue",   "desc": "메모" },
+  { "name": "clips",               "url": "https://github.com/myaitravel/clips",               "icon": "✂️", "color": "bg-pink",   "desc": "클립 관리" },
+  { "name": "cook-cooking",        "url": "https://github.com/myaitravel/cook-cooking",        "icon": "🍳", "color": "bg-orange", "desc": "요리" },
+  { "name": "study-alarm",         "url": "https://github.com/myaitravel/study-alarm",         "icon": "⏰", "color": "bg-teal",   "desc": "학습 알람" },
+  { "name": "myaitravel.github.io","url": "https://github.com/myaitravel/myaitravel.github.io","icon": "🌐", "color": "bg-indigo", "desc": "깃허브 페이지" },
+  { "name": "weather",             "url": "https://github.com/myaitravel/weather",             "icon": "🌤️", "color": "bg-yellow", "desc": "날씨" },
+  { "name": "exchange",            "url": "https://github.com/myaitravel/exchange",            "icon": "💱", "color": "bg-cyan",   "desc": "환율" },
+  { "name": "card-tracker",        "url": "https://github.com/myaitravel/card-tracker",        "icon": "💳", "color": "bg-green",  "desc": "카드 추적" },
+  { "name": "per-radar",           "url": "https://github.com/myaitravel/per-radar",           "icon": "📡", "color": "bg-purple", "desc": "레이더" },
+  { "name": "study-Englishword",   "url": "https://github.com/myaitravel/study-Englishword",   "icon": "📚", "color": "bg-rose",   "desc": "영단어 학습" },
+  { "name": "stock-english-tutor", "url": "https://github.com/myaitravel/stock-english-tutor", "icon": "📈", "color": "bg-lime",   "desc": "주식 영어 튜터" }
+]

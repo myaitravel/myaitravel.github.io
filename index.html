@@ -158,67 +158,8 @@
 
 <!-- REPOS TAB -->
 <div class="panel active" id="panel-repos">
-  <div class="grid">
-    <a class="card" href="https://github.com/myaitravel/bookmark-hub" target="_blank">
-      <div class="icon-wrap bg-red">🔖</div>
-      <div class="card-name">bookmark-hub</div>
-      <div class="card-desc">북마크 관리</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/memo" target="_blank">
-      <div class="icon-wrap bg-blue">📝</div>
-      <div class="card-name">memo</div>
-      <div class="card-desc">메모</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/clips" target="_blank">
-      <div class="icon-wrap bg-pink">✂️</div>
-      <div class="card-name">clips</div>
-      <div class="card-desc">클립 관리</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/cook-cooking" target="_blank">
-      <div class="icon-wrap bg-orange">🍳</div>
-      <div class="card-name">cook-cooking</div>
-      <div class="card-desc">요리</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/study-alarm" target="_blank">
-      <div class="icon-wrap bg-teal">⏰</div>
-      <div class="card-name">study-alarm</div>
-      <div class="card-desc">학습 알람</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/myaitravel.github.io" target="_blank">
-      <div class="icon-wrap bg-indigo">🌐</div>
-      <div class="card-name">myaitravel.github.io</div>
-      <div class="card-desc">깃허브 페이지</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/weather" target="_blank">
-      <div class="icon-wrap bg-yellow">🌤️</div>
-      <div class="card-name">weather</div>
-      <div class="card-desc">날씨</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/exchange" target="_blank">
-      <div class="icon-wrap bg-cyan">💱</div>
-      <div class="card-name">exchange</div>
-      <div class="card-desc">환율</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/card-tracker" target="_blank">
-      <div class="icon-wrap bg-green">💳</div>
-      <div class="card-name">card-tracker</div>
-      <div class="card-desc">카드 추적</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/per-radar" target="_blank">
-      <div class="icon-wrap bg-purple">📡</div>
-      <div class="card-name">per-radar</div>
-      <div class="card-desc">레이더</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/study-Englishword" target="_blank">
-      <div class="icon-wrap bg-rose">📚</div>
-      <div class="card-name">study-Englishword</div>
-      <div class="card-desc">영단어 학습</div>
-    </a>
-    <a class="card" href="https://github.com/myaitravel/stock-english-tutor" target="_blank">
-      <div class="icon-wrap bg-lime">📈</div>
-      <div class="card-name">stock-english-tutor</div>
-      <div class="card-desc">주식 영어 튜터</div>
-    </a>
+  <div class="grid" id="repos-grid">
+    <div class="empty">불러오는 중...</div>
   </div>
 </div>
 
@@ -242,31 +183,59 @@
     if (name === 'apps') loadApps();
   }
 
+  // 카드 렌더링
+  function renderCards(items) {
+    return items.map(item => `
+      <a class="card" href="${item.url}" target="_blank">
+        <div class="icon-wrap ${item.color}">${item.icon}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+      </a>
+    `).join('');
+  }
+
+  // 여러 URL을 순서대로 시도 (앞이 실패하면 다음으로 fallback)
+  function fetchWithFallback(urls) {
+    const list = Array.isArray(urls) ? urls : [urls];
+    return list.reduce(
+      (chain, url) => chain.catch(() => fetch(url).then(r => r.ok ? r.json() : Promise.reject())),
+      Promise.reject()
+    );
+  }
+
+  function loadGrid(urls, gridId, emptyMsg, errorMsg) {
+    fetchWithFallback(urls)
+      .then(items => {
+        const grid = document.getElementById(gridId);
+        if (!items.length) {
+          grid.innerHTML = `<div class="empty">${emptyMsg}</div>`;
+          return;
+        }
+        grid.innerHTML = renderCards(items);
+      })
+      .catch(() => {
+        document.getElementById(gridId).innerHTML = `<div class="empty">${errorMsg}</div>`;
+      });
+  }
+
+  let reposLoaded = false;
   let appsLoaded = false;
+
+  function loadRepos() {
+    if (reposLoaded) return;
+    reposLoaded = true;
+    // 로컬 repos.json 우선, 없으면 공개용 repos.default.json
+    loadGrid(['repos.json', 'repos.default.json'], 'repos-grid', '아직 레포가 없어요', '레포 목록을 불러올 수 없어요');
+  }
 
   function loadApps() {
     if (appsLoaded) return;
     appsLoaded = true;
-    fetch('https://myaitravel.github.io/bookmark-hub/apps.json')
-      .then(r => r.json())
-      .then(apps => {
-        const grid = document.getElementById('apps-grid');
-        if (!apps.length) {
-          grid.innerHTML = '<div class="empty">아직 앱이 없어요</div>';
-          return;
-        }
-        grid.innerHTML = apps.map(app => `
-          <a class="card" href="${app.url}" target="_blank">
-            <div class="icon-wrap ${app.color}">${app.icon}</div>
-            <div class="card-name">${app.name}</div>
-            <div class="card-desc">${app.desc}</div>
-          </a>
-        `).join('');
-      })
-      .catch(() => {
-        document.getElementById('apps-grid').innerHTML = '<div class="empty">앱 목록을 불러올 수 없어요</div>';
-      });
+    loadGrid('https://myaitravel.github.io/bookmark-hub/apps.json', 'apps-grid', '아직 앱이 없어요', '앱 목록을 불러올 수 없어요');
   }
+
+  // 초기 로드 (Repos 탭이 기본 active)
+  loadRepos();
 </script>
 
 </body>
